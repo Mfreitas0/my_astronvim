@@ -232,4 +232,65 @@ cmp.setup.cmdline(":", {
 
 --############################################################################################
 --PADRAO DO CursorLine
-vim.opt.guicursor = "n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20"
+-- Define estilos diferentes para o cursor
+vim.opt.guicursor = "n-v-c-sm-ve:ver25,i-ci:ver25,r-cr-o:hor20,a:blinkon0"
+
+-- Alternar o estilo e a cor do cursor entre normal e outros modos
+--###################################################################################
+vim.cmd [[
+  augroup CursorStyles
+    autocmd!
+    autocmd InsertEnter * highlight Cursor guifg=NONE guibg=#ff00ff
+    autocmd InsertLeave * highlight Cursor guifg=NONE guibg=NONE
+    autocmd InsertEnter * set guicursor+=i-ci:hor20
+    autocmd InsertLeave * set guicursor=n-v-c-sm-ve:ver25,i-ci:hor20,r-cr-o:hor20
+    autocmd ModeChanged *:[vV\x16]* highlight Cursor guifg=NONE guibg=#ff00ff
+    autocmd ModeChanged *:[vV\x16]* set guicursor+=v:hor20
+    autocmd ModeChanged [vV\x16]*:* highlight Cursor guifg=NONE guibg=NONE
+    autocmd ModeChanged [vV\x16]*:* set guicursor=n-v-c-sm-ve:ver25,i-ci:hor20,r-cr-o:hor20
+  augroup END
+]]
+--pyrigth com o checking off
+require("lspconfig").pyright.setup {
+  settings = {
+    python = {
+      analysis = {
+        typeCheckingMode = "off",
+        diagnosticMode = "workspace",
+      },
+    },
+  },
+}
+
+--############################################################################################
+--MOVER LINHA COM ALT
+-- Função para mover uma linha ou linhas selecionadas para cima
+-- Função para mover uma linha ou linhas selecionadas para cima
+_G.move_line_up = function()
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "v" or mode == "V" or mode == "<C-v>" then
+    vim.cmd "'<,'>move '<-2"
+    vim.cmd "normal! gv"
+  else
+    vim.cmd "move .-2"
+  end
+end
+
+-- Função para mover uma linha ou linhas selecionadas para baixo
+_G.move_line_down = function()
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "v" or mode == "V" or mode == "<C-v>" then
+    vim.cmd "'<,'>move '>+1"
+    vim.cmd "normal! gv"
+  else
+    vim.cmd "move .+1"
+  end
+end
+
+-- Mapear Alt+K para mover a linha ou seleção para cima
+vim.api.nvim_set_keymap("n", "<A-k>", ":lua move_line_up()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<A-k>", ":lua move_line_up()<CR>", { noremap = true, silent = true })
+
+-- Mapear Alt+J para mover a linha ou seleção para baixo
+vim.api.nvim_set_keymap("n", "<A-j>", ":lua move_line_down()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<A-j>", ":lua move_line_down()<CR>", { noremap = true, silent = true })
