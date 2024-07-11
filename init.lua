@@ -67,6 +67,7 @@ vim.api.nvim_set_keymap("n", "<F3>", ":Neotree toggle<CR>", { noremap = true, si
 -- Mapeamento de teclas para navegar entre buffers abertos
 vim.api.nvim_set_keymap("n", "<S-h>", ":bnext<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<S-l>", ":bprevious<CR>", { noremap = true, silent = true })
+--
 
 --------------------------------------------------------------------------------------------
 --##############################CONFIURACOES DO TERMINAL###################################
@@ -294,3 +295,80 @@ vim.api.nvim_set_keymap("v", "<A-k>", ":lua move_line_up()<CR>", { noremap = tru
 -- Mapear Alt+J para mover a linha ou seleção para baixo
 vim.api.nvim_set_keymap("n", "<A-j>", ":lua move_line_down()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "<A-j>", ":lua move_line_down()<CR>", { noremap = true, silent = true })
+--#################################################################################################
+--
+--ADICIONAR PARES NO MODO VISUAL
+-- Mapear para envolver seleção com parênteses
+vim.api.nvim_set_keymap("x", "<leader>(", "<Esc>`>a)<Esc>`<i(<Esc>", { noremap = true, silent = true })
+
+-- Mapear para envolver seleção com colchetes
+vim.api.nvim_set_keymap("x", "<leader>[", "<Esc>`>a]<Esc>`<i[<Esc>", { noremap = true, silent = true })
+
+-- Mapear para envolver seleção com aspas duplas
+vim.api.nvim_set_keymap("x", '<leader>"', '<Esc>`>a"<Esc>`<i"<Esc>', { noremap = true, silent = true })
+
+-- Mapear para envolver seleção com aspas simples
+vim.api.nvim_set_keymap("x", "<leader>'", "<Esc>`>a'<Esc>`<i'<Esc>", { noremap = true, silent = true })
+
+-- Mapear para envolver seleção com chaves
+vim.api.nvim_set_keymap("x", "<leader>{", "<Esc>`>a}<Esc>`<i{<Esc>", { noremap = true, silent = true })
+
+--########################################################################################
+--DROBRAMENTO DE SINTAXE DE CODIGO
+--za:Alterna o fold sob o cursor (abre se estiver fechado e fecha se estiver aberto).
+-- zc: Fecha o fold sob o cursor.
+-- zo: Abre o fold sob o cursor.
+-- zR: Abre todos os folds no buffer.
+-- zM: Fecha todos os folds no buffer.
+--
+-- ##################################################################################
+--
+-- No seu arquivo de configuração do Neovim (ex: init.lua)
+require("lspconfig").pyright.setup {
+  on_attach = function(client, bufnr)
+    -- Outros setups, se necessário
+  end,
+  settings = {
+    python = {
+      analysis = {
+        autoSearchPaths = true,
+        useLibraryCodeForTypes = true,
+        diagnosticMode = "workspace", -- ou "openFilesOnly" se você quiser limitar a análise
+        typeCheckingMode = "off", -- Desativa o type checking rigoroso
+      },
+    },
+  },
+}
+
+--
+--#########################################################
+--AMBIENTE VIRTUAL
+-- Outras configurações do seu init.lua
+
+-- Função para ativar ambiente virtual
+local function activate_virtualenv()
+  if os.getenv "VIRTUAL_ENV" then return end
+
+  local handle = io.popen "poetry env info --path 2>/dev/null"
+  local poetry_venv = handle:read "*a"
+  handle:close()
+
+  if poetry_venv and poetry_venv ~= "" then
+    poetry_venv = poetry_venv:gsub("%s+", "")
+    vim.env.VIRTUAL_ENV = poetry_venv
+    vim.env.PATH = poetry_venv .. "/bin:" .. vim.env.PATH
+    print("Activated Poetry virtualenv: " .. poetry_venv)
+    return
+  end
+
+  local venv_dir = vim.fn.finddir("venv", ".;")
+  if venv_dir ~= "" then
+    local venv_path = vim.fn.resolve(venv_dir)
+    vim.env.VIRTUAL_ENV = venv_path
+    vim.env.PATH = venv_path .. "/bin:" .. vim.env.PATH
+    print("Activated virtualenv: " .. venv_path)
+  end
+end
+
+-- Executa a função ao iniciar o Neovim
+activate_virtualenv()

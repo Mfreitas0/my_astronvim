@@ -82,36 +82,18 @@ return {
       )
     end,
   },
-  -- Adiciona o plugin lualine.nvim STATUSLINE
-  -- {
-  --   "nvim-lualine/lualine.nvim",
-  --   requires = { "kyazdani42/nvim-web-devicons", opt = true },
-  --   config = function()
-  --     require("lualine").setup {
-  --       options = {
-  --         theme = "auto", -- Use um que suporte cores
-  --         section_separators = { left = "", right = "" }, -- Formato de seta
-  --         component_separators = { left = "", right = "" },
-  --       },
-  --       sections = {
-  --         lualine_a = { "mode" },
-  --         lualine_b = { "branch" },
-  --         lualine_c = { "filename" },
-  --         lualine_x = { "encoding", "fileformat", "filetype" },
-  --         lualine_y = { "progress" },
-  --         lualine_z = { "location" },
-  --       } w,
-  --       inactive_sections = {
-  --         lualine_a = {},
-  --         lualine_b = {},
-  --         lualine_c = { "filename" },
-  --         lualine_x = { "location" },
-  --         lualine_y = {},
-  --         lualine_z = {},
-  --       },
-  --       tabline = {},
-  --       extensions = {},
-  --     }
-  --   end,
-  -- },
+  {
+    "dense-analysis/ale",
+    config = function()
+      -- Configuration goes here.
+      local g = vim.g
+
+      g.ale_ruby_rubocop_auto_correct_all = 1
+
+      g.ale_linters = {
+        ruby = { "rubocop", "ruby" },
+        lua = { "lua_language_server" },
+      }
+    end,
+  },
 }

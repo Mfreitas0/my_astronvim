@@ -40,7 +40,7 @@ return {
           Comment = { fg = "#6272A4", italic = true },
           CursorLineNr = { fg = "#FF79C6" },
           LineNr = { fg = "#6272A4" },
-          Normal = { bg = "1E1E2E" },
+          Normal = { bg = "#1E1E2E" },
           Visual = { bg = "#44475A" },
         },
       }
