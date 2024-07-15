@@ -18,8 +18,6 @@ end
 require "lazy_setup"
 require "polish"
 
------- CONFIG TREE
-
 require("neo-tree").setup {
   filesystem = {
     follow_current_file = true,
@@ -64,11 +62,6 @@ require("neo-tree").setup {
 -- Mapeamento de Teclas para abrir o neo-tree
 vim.api.nvim_set_keymap("n", "<F3>", ":Neotree toggle<CR>", { noremap = true, silent = true })
 
--- Mapeamento de teclas para navegar entre buffers abertos
-vim.api.nvim_set_keymap("n", "<S-h>", ":bnext<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<S-l>", ":bprevious<CR>", { noremap = true, silent = true })
---
-
 --------------------------------------------------------------------------------------------
 --##############################CONFIURACOES DO TERMINAL###################################
 --
@@ -88,9 +81,9 @@ require("toggleterm").setup {
   shell = vim.o.shell,
 }
 
-vim.api.nvim_set_keymap("n", "<F2>", ":ToggleTerm direction=horizontal<CR>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("n", "<F2>", ":ToggleTerm direction=horizontal<CR>", { noremap = true, silent = true })
 
-vim.api.nvim_set_keymap("t", "<F2>", [[<C-\><C-n><Cmd>ToggleTerm<CR>]], { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("t", "<F2>", [[<C-\><C-n><Cmd>ToggleTerm<CR>]], { noremap = true, silent = true })
 --
 --
 --
@@ -99,8 +92,8 @@ vim.api.nvim_set_keymap("t", "<F2>", [[<C-\><C-n><Cmd>ToggleTerm<CR>]], { norema
 -- Função para rolar o terminal
 function _G.set_terminal_keymaps()
   local opts = { noremap = true, silent = true }
-  vim.api.nvim_buf_set_keymap(0, "t", "<PageUp>", [[<C-\><C-n><C-b>]], opts)
-  vim.api.nvim_buf_set_keymap(0, "t", "<PageDown>", [[<C-\><C-n><C-f>]], opts)
+  vim.api.nvim_buf_set_keymap(0, "t", "<Home>", [[<C-\><C-n><C-b>]], opts)
+  vim.api.nvim_buf_set_keymap(0, "t", "<End>", [[<C-\><C-n><C-f>]], opts)
 end
 
 -- Configuração do autocomando para definir as teclas no terminal
@@ -109,7 +102,7 @@ vim.cmd "autocmd! TermOpen term://* lua set_terminal_keymaps()"
 --
 ---------------------------------------------------------------------------
 ----QUEBRA DE LINHA
--- Mapeamento de tecla para alternar a quebra de linha com F4
+-- Mapeamento de tecla para alterna a quebra de linha com F4
 vim.api.nvim_set_keymap("n", "<F4>", ":set wrap!<CR>", { noremap = true, silent = true })
 
 -----------------------------------------------------------------------
@@ -121,11 +114,11 @@ local function execute_file_in_toggleterm()
   local cmd = "python3 " .. file
 
   -- Abre ou foca o terminal na orientação horizontal
-  vim.cmd "ToggleTerm direction=horizontal"
+  vim.cmd "ToggleTerm direction=float"
 
-  -- Aguarda um momento para garantir que o terminal esteja pronto
+  -- Aguarda um mmento para garantir que o terminal esteja pronto
   vim.defer_fn(function()
-    -- Envia o comando para o terminal
+    -- Envia o coando para o terminal
     vim.api.nvim_chan_send(vim.b.terminal_job_id, cmd .. "\n")
   end, 100)
 end
@@ -236,7 +229,7 @@ cmp.setup.cmdline(":", {
 -- Define estilos diferentes para o cursor
 vim.opt.guicursor = "n-v-c-sm-ve:ver25,i-ci:ver25,r-cr-o:hor20,a:blinkon0"
 
--- Alternar o estilo e a cor do cursor entre normal e outros modos
+-- lternar o estilo e a cor do cursor entre normal e outros modos
 --###################################################################################
 vim.cmd [[
   augroup CursorStyles
@@ -372,3 +365,15 @@ end
 
 -- Executa a função ao iniciar o Neovim
 activate_virtualenv()
+
+--#################################################################
+require("notify").setup {
+  background_colour = "#000000",
+}
+--##################################################################
+--
+--
+-- Mapeamento de teclas para navegar entre buffers abertos
+vim.api.nvim_set_keymap("n", "<S-l>", ":bnext<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<S-h>", ":bprevious<CR>", { noremap = true, silent = true })
+--

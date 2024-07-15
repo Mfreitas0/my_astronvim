@@ -43,9 +43,9 @@ return {
         c = { bg = colors.bg, fg = colors.fg },
       },
       inactive = {
-        a = { bg = colors.inactive_bg, fg = colors.semilightgray, gui = "bold" },
-        b = { bg = colors.inactive_bg, fg = colors.semilightgray },
-        c = { bg = colors.inactive_bg, fg = colors.semilightgray },
+        a = { bg = colors.inactive_bg, fg = colors.fg, gui = "bold" },
+        b = { bg = colors.inactive_bg, fg = colors.fg },
+        c = { bg = colors.inactive_bg, fg = colors.fg },
       },
     }
 
@@ -55,6 +55,15 @@ return {
         theme = my_lualine_theme,
       },
       sections = {
+        lualine_b = {
+          {
+            "diff",
+            symbols = { added = "● ", modified = "● ", removed = "● " },
+            color_added = colors.green,
+            color_modified = colors.blue,
+            color_removed = colors.red,
+          },
+        },
         lualine_x = {
           {
             lazy_status.updates,
