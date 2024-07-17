@@ -28,22 +28,22 @@ lspconfig.pyright.setup {
   end,
 }
 
--- Configurações do Pylsp
-lspconfig.pylsp.setup {
-  settings = {
-    pylsp = {
-      plugins = {
-        pylint = { enabled = false },
-        pyflakes = { enabled = false },
-        pycodestyle = { enabled = false },
-        mccabe = { enabled = false },
-        pydocstyle = { enabled = false },
-      },
-    },
-  },
-  on_new_config = function(new_config, new_root_dir)
-    new_config.settings.pylsp.plugins.pylsp_mypy.venvPath = get_python_path(new_root_dir)
-  end,
-}
+-- -- Configurações do Pylsp
+-- lspconfig.pylsp.setup {
+--   settings = {
+--     pylsp = {
+--       plugins = {
+--         pylint = { enabled = false },
+--         pyflakes = { enabled = false },
+--         pycodestyle = { enabled = false },
+--         mccabe = { enabled = false },
+--         pydocstyle = { enabled = false },
+--       },
+--     },
+--   },
+--   on_new_config = function(new_config, new_root_dir)
+--     new_config.settings.pylsp.plugins.pylsp_mypy.venvPath = get_python_path(new_root_dir)
+--   end,
+-- }
 
 return {}

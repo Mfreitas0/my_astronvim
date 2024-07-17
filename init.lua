@@ -127,7 +127,7 @@ end
 _G.execute_file_in_toggleterm = execute_file_in_toggleterm
 
 -- Mapear a tecla para executar o arquivo Python atual
-vim.api.nvim_set_keymap("n", "<F5>", ":lua execute_file_in_toggleterm()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<F2>", ":lua execute_file_in_toggleterm()<CR>", { noremap = true, silent = true })
 
 ------------------------------------------------------------------------------------------
 --DESTACAR LINHA ATUAL
