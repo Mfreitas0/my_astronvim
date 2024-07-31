@@ -9,13 +9,15 @@ return {
       blue = "#65D1FF",
       green = "#3EFFDC",
       violet = "#FF61EF",
-      yellow = "#FFDA7B",
+      yellow = "#7d7529",
       red = "#FF4A4A",
       fg = "#c3ccdc",
       bg = "#112638",
       inactive_bg = "#2c3043",
-      custom_bg = "#304a37",
+      custom_bg = "#112638",
       gray = "#909190",
+      git_bg = "#914c21",
+      error_bg = "#57354c",
     }
 
     local my_lualine_theme = {
@@ -69,6 +71,7 @@ return {
           },
           {
             "diff",
+            color = { bg = colors.git_bg, fg = colors.bg, gui = "bold" },
             symbols = { added = "● ", modified = "● ", removed = "● " },
             color_added = { fg = colors.green },
             color_modified = { fg = colors.blue },
@@ -78,6 +81,7 @@ return {
           {
             "diagnostics",
             sources = { "nvim_diagnostic" },
+            color = { bg = colors.error_bg, fg = colors.bg, gui = "bold" },
             symbols = { error = " ", warn = " ", info = " ", hint = " " },
             diagnostics_color = {
               error = { fg = colors.red },
@@ -88,7 +92,14 @@ return {
             separator = { right = "" },
           },
         },
-        lualine_c = { { "filename", separator = { right = "" } } },
+        lualine_c = {
+          {
+            "filename",
+            icon = "",
+            color = { bg = colors.gray, fg = colors.bg, gui = "bold" },
+            separator = { right = "" },
+          },
+        },
         lualine_x = {
           {
             lazy_status.updates,

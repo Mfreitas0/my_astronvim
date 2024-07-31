@@ -3,14 +3,17 @@
 local lazypath = vim.env.LAZY or vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 if not (vim.env.LAZY or (vim.uv or vim.loop).fs_stat(lazypath)) then
   -- stylua: ignore
-  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable",
+    lazypath })
 end
 vim.opt.rtp:prepend(lazypath)
 
 -- validate that lazy is available
 if not pcall(require, "lazy") then
   -- stylua: ignore
-  vim.api.nvim_echo({ { ("Unable to load lazy from: %s\n"):format(lazypath), "ErrorMsg" }, { "Press any key to exit...", "MoreMsg" } }, true, {})
+  vim.api.nvim_echo(
+    { { ("Unable to load lazy from: %s\n"):format(lazypath), "ErrorMsg" }, { "Press any key to exit...", "MoreMsg" } },
+    true, {})
   vim.fn.getchar()
   vim.cmd.quit()
 end
@@ -18,6 +21,7 @@ end
 require "lazy_setup"
 require "polish"
 
+---- > Config Neotree <----
 require("neo-tree").setup {
   filesystem = {
     follow_current_file = true,
@@ -50,7 +54,6 @@ require("neo-tree").setup {
           if node.type == "directory" then
             state.commands.toggle_directory(state)
           else
-            -- Use 'edit' para abrir o buffer no buffer atual
             vim.api.nvim_command("edit " .. node.path)
           end
         end,
@@ -62,9 +65,8 @@ require("neo-tree").setup {
 -- Mapeamento de Teclas para abrir o neo-tree
 vim.api.nvim_set_keymap("n", "<F3>", ":Neotree toggle<CR>", { noremap = true, silent = true })
 
---------------------------------------------------------------------------------------------
---##############################CONFIURACOES DO TERMINAL###################################
---
+---------> CONFIURACOES DO TERMINAL <----------------------------------------------
+
 require("toggleterm").setup {
   size = 15,
   open_mapping = [[<c-\>]],
@@ -77,62 +79,63 @@ require("toggleterm").setup {
   terminal_mappings = true,
   persist_size = true,
   direction = "horizontal", -- Define o modo horizontal split
-  close_on_exit = true,
+  close_on_exit = false, -- Garanta que o terminal não feche após a execução do comando
   shell = vim.o.shell,
+  float_opts = {
+    border = "curved", -- Tipo de borda para o terminal flutuante "curved"
+    width = 84,
+    height = 35,
+    winblend = 4,
+  },
 }
 
--- vim.api.nvim_set_keymap("n", "<F2>", ":ToggleTerm direction=horizontal<CR>", { noremap = true, silent = true })
+local Terminal = require("toggleterm.terminal").Terminal
 
--- vim.api.nvim_set_keymap("t", "<F2>", [[<C-\><C-n><Cmd>ToggleTerm<CR>]], { noremap = true, silent = true })
---
---
---
--- cnfigurando rolangem dentro do terminal
--- Função para rolar o terminal
--- Função para rolar o terminal
+local horizontal_term = Terminal:new { direction = "horizontal", hidden = true, close_on_exit = true }
+
+function _G.run_current_file()
+  local file = vim.fn.expand "%:p"
+  local ext = vim.fn.expand "%:e"
+  local cmd = ""
+
+  if ext == "py" then
+    cmd = "python " .. file
+  elseif ext == "lua" then
+    cmd = "lua " .. file
+  elseif ext == "js" then
+    cmd = "node " .. file
+  else
+    vim.notify(" Não Foi Encontrado Suporte Para Esta Extensão: " .. ext, vim.log.levels.WARN)
+    return
+  end
+
+  horizontal_term:toggle()
+  vim.defer_fn(function()
+    horizontal_term:send(cmd .. "\n", true)
+    vim.notify("▶ Executando arquivo: " .. file, vim.log.levels.INFO)
+  end, 100)
+end
+
+-- Mapeamento de tecla para abrir o terminal flutuante
+vim.api.nvim_set_keymap("n", "<C-\\>", ":ToggleTerm direction=float<CR>", { noremap = true, silent = true })
+
+-- Mapeamento de tecla para executar o arquivo atual no terminal horizontal
+vim.api.nvim_set_keymap("n", "<F5>", ":lua run_current_file()<CR>", { noremap = true, silent = true })
+
+---------------> Função para rolar o terminal <--------------------------------
 function _G.set_terminal_keymaps()
   local opts = { noremap = true, silent = true }
   vim.api.nvim_buf_set_keymap(0, "t", "<Home>", [[<C-\><C-n><C-b>]], opts)
   vim.api.nvim_buf_set_keymap(0, "t", "<End>", [[<C-\><C-n><C-f>]], opts)
 end
 
--- Configuração do autocomando para definir as teclas no terminal
 vim.cmd "autocmd! TermOpen term://* lua set_terminal_keymaps()"
--------------------------------------------------------------------------
---
----------------------------------------------------------------------------
-----QUEBRA DE LINHA
--- Mapeamento de tecla para alterna a quebra de linha com F4
+
+----> QUEBRA DE LINHA < ----
 vim.api.nvim_set_keymap("n", "<F4>", ":set wrap!<CR>", { noremap = true, silent = true })
 
------------------------------------------------------------------------
---EXECUTAR ARQUIVO ATUAAL
--- Função para executar o arquivo atual no toggleterm
--- Função para executar o arquivo atual no terminal toggleterm
-local function execute_file_in_toggleterm()
-  local file = vim.fn.expand "%"
-  local cmd = "python3 " .. file
+---- > DESTACAR LINHA ATUAL < ----
 
-  -- Abre ou foca o terminal na orientação horizontal
-  vim.cmd "ToggleTerm direction=float"
-
-  -- Aguarda um mmento para garantir que o terminal esteja pronto
-  vim.defer_fn(function()
-    -- Envia o coando para o terminal
-    vim.api.nvim_chan_send(vim.b.terminal_job_id, cmd .. "\n")
-  end, 100)
-end
-
--- Torna a função globalmente acessível
-_G.execute_file_in_toggleterm = execute_file_in_toggleterm
-
--- Mapear a tecla para executar o arquivo Python atual
-vim.api.nvim_set_keymap("n", "<F2>", ":lua execute_file_in_toggleterm()<CR>", { noremap = true, silent = true })
-
-------------------------------------------------------------------------------------------
---DESTACAR LINHA ATUAL
-
--- Definir esquema de cores personalizado para a numeração de linhas
 vim.cmd [[
   highlight LineNr guifg=#FFFFFF
   highlight CursorLineNr guifg=#FFA500
@@ -143,21 +146,16 @@ vim.o.number = true -- Habilitar números de linha
 vim.o.relativenumber = false -- Desativar números de linha relativos
 vim.wo.cursorline = true -- Ativar destaque da linha atual
 
----------------------------------------------------------------
---INDETAÇÃO COM TAB & SHIFT+TAB
--- Função para configurar mapeamentos de teclas
+---- > INDETAÇÃO COM TAB & SHIFT+TAB < ----
 local function map(mode, lhs, rhs, opts)
   local options = { noremap = true, silent = true }
   if opts then options = vim.tbl_extend("force", options, opts) end
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
--- Mapeamentos para indentar e remover indentação
--- Indentar linha(s) selecionada(s) em modo normal e visual
 map("n", "<Tab>", ">>")
 map("v", "<Tab>", ">gv")
 
--- Remover indentação de linha(s) selecionada(s) em modo normal e visual
 map("n", "<S-Tab>", "<<")
 map("v", "<S-Tab>", "<gv")
 
@@ -215,22 +213,37 @@ cmp.setup.cmdline("/", {
   },
 })
 
--- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-cmp.setup.cmdline(":", {
-  sources = cmp.config.sources({
-    { name = "path" },
-  }, {
-    { name = "cmdline" },
-  }),
-})
+-- -- Use cmdline & path source for ':' (if you enabled `native_menu
 
---############################################################################################
---PADRAO DO CursorLine
+-- -- > cor notify < ----
+
+require("notify").setup {
+  background_colour = "#000000",
+  stages = "fade",
+  timeout = 3000,
+  max_width = 50,
+  max_height = 10,
+  on_open = nil,
+  on_close = nil,
+  render = "default",
+  minimum_width = 50,
+  icons = {
+    ERROR = "",
+    WARN = "",
+    INFO = "",
+    DEBUG = "",
+    TRACE = "✎",
+  },
+  level = "info", -- nível de prioridade (pode ser "trace", "debug", "info", "warn", "error", "off")
+  top_down = true,
+  fps = 30,
+  stages = "fade_in_slide_out",
+}
+
+-- -- > Padrao do CursorLine < -- --
 -- Define estilos diferentes para o cursor
 vim.opt.guicursor = "n-v-c-sm-ve:ver25,i-ci:ver25,r-cr-o:hor20,a:blinkon0"
 
--- lternar o estilo e a cor do cursor entre normal e outros modos
---###################################################################################
 vim.cmd [[
   augroup CursorStyles
     autocmd!
@@ -255,10 +268,7 @@ require("lspconfig").pyright.setup {
     },
   },
 }
-
---############################################################################################
---MOVER LINHA COM ALT
--- Função para mover uma linha ou linhas selecionadas para cima
+-- -- >Move linha com ALT < -- --
 -- Função para mover uma linha ou linhas selecionadas para cima
 _G.move_line_up = function()
   local mode = vim.api.nvim_get_mode().mode
@@ -288,34 +298,25 @@ vim.api.nvim_set_keymap("v", "<A-k>", ":lua move_line_up()<CR>", { noremap = tru
 -- Mapear Alt+J para mover a linha ou seleção para baixo
 vim.api.nvim_set_keymap("n", "<A-j>", ":lua move_line_down()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "<A-j>", ":lua move_line_down()<CR>", { noremap = true, silent = true })
---#################################################################################################
 --
---ADICIONAR PARES NO MODO VISUAL
+-- -- > Pares (){}[] "" ''< -- --
+
 -- Mapear para envolver seleção com parênteses
-vim.api.nvim_set_keymap("x", "<leader>(", "<Esc>`>a)<Esc>`<i(<Esc>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<leader>(", "<Esc>>a)<Esc><i(<Esc>", { noremap = true, silent = true })
 
 -- Mapear para envolver seleção com colchetes
-vim.api.nvim_set_keymap("x", "<leader>[", "<Esc>`>a]<Esc>`<i[<Esc>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<leader>[", "<Esc>>a]<Esc><i[<Esc>", { noremap = true, silent = true })
 
 -- Mapear para envolver seleção com aspas duplas
-vim.api.nvim_set_keymap("x", '<leader>"', '<Esc>`>a"<Esc>`<i"<Esc>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", '<leader>"', '<Esc>>a"<Esc><i"<Esc>', { noremap = true, silent = true })
 
 -- Mapear para envolver seleção com aspas simples
-vim.api.nvim_set_keymap("x", "<leader>'", "<Esc>`>a'<Esc>`<i'<Esc>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<leader>'", "<Esc>>a'<Esc><i'<Esc>", { noremap = true, silent = true })
 
 -- Mapear para envolver seleção com chaves
-vim.api.nvim_set_keymap("x", "<leader>{", "<Esc>`>a}<Esc>`<i{<Esc>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<leader>{", "<Esc>>a}<Esc><i{<Esc>", { noremap = true, silent = true })
 
---########################################################################################
---DROBRAMENTO DE SINTAXE DE CODIGO
---za:Alterna o fold sob o cursor (abre se estiver fechado e fecha se estiver aberto).
--- zc: Fecha o fold sob o cursor.
--- zo: Abre o fold sob o cursor.
--- zR: Abre todos os folds no buffer.
--- zM: Fecha todos os folds no buffer.
---
--- ##################################################################################
---
+-- -- > pyright erros < -- --
 -- No seu arquivo de configuração do Neovim (ex: init.lua)
 require("lspconfig").pyright.setup {
   on_attach = function(client, bufnr)
@@ -333,10 +334,7 @@ require("lspconfig").pyright.setup {
   },
 }
 
---
---#########################################################
---AMBIENTE VIRTUAL
--- Outras configurações do seu init.lua
+-- -- > AMBIENTE VIRTUAL < -- --
 
 -- Função para ativar ambiente virtual
 local function activate_virtualenv()
@@ -366,14 +364,8 @@ end
 -- Executa a função ao iniciar o Neovim
 activate_virtualenv()
 
---#################################################################
-require("notify").setup {
-  background_colour = "#000000",
-}
---##################################################################
---
---
--- Mapeamento de teclas para navegar entre buffers abertos
+-- -- > Mapeamento de teclas para navegar entre buffers abertos < -- --
 vim.api.nvim_set_keymap("n", "<S-l>", ":bnext<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<S-h>", ":bprevious<CR>", { noremap = true, silent = true })
---
+
+-- -- > < -- --
