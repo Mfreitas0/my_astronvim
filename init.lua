@@ -65,6 +65,9 @@ require("neo-tree").setup {
 -- Mapeamento de Teclas para abrir o neo-tree
 vim.api.nvim_set_keymap("n", "<F3>", ":Neotree toggle<CR>", { noremap = true, silent = true })
 
+--
+--
+--
 ---------> CONFIURACOES DO TERMINAL <----------------------------------------------
 
 require("toggleterm").setup {
@@ -159,6 +162,9 @@ map("v", "<Tab>", ">gv")
 map("n", "<S-Tab>", "<<")
 map("v", "<S-Tab>", "<gv")
 
+--
+--
+--
 --#####################################################################################
 -- nvim-cmp configuration
 local cmp = require "cmp"
@@ -240,6 +246,9 @@ require("notify").setup {
   stages = "fade_in_slide_out",
 }
 
+--
+--
+--
 -- -- > Padrao do CursorLine < -- --
 -- Define estilos diferentes para o cursor
 vim.opt.guicursor = "n-v-c-sm-ve:ver25,i-ci:ver25,r-cr-o:hor20,a:blinkon0"
@@ -268,6 +277,9 @@ require("lspconfig").pyright.setup {
     },
   },
 }
+--
+--
+--
 -- -- >Move linha com ALT < -- --
 -- Função para mover uma linha ou linhas selecionadas para cima
 _G.move_line_up = function()
@@ -299,23 +311,28 @@ vim.api.nvim_set_keymap("v", "<A-k>", ":lua move_line_up()<CR>", { noremap = tru
 vim.api.nvim_set_keymap("n", "<A-j>", ":lua move_line_down()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "<A-j>", ":lua move_line_down()<CR>", { noremap = true, silent = true })
 --
+--
+--
 -- -- > Pares (){}[] "" ''< -- --
 
 -- Mapear para envolver seleção com parênteses
-vim.api.nvim_set_keymap("x", "<leader>(", "<Esc>>a)<Esc><i(<Esc>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<leader>(", 'c(<C-r>")<Esc>', { noremap = true, silent = true })
 
 -- Mapear para envolver seleção com colchetes
-vim.api.nvim_set_keymap("x", "<leader>[", "<Esc>>a]<Esc><i[<Esc>", { noremap = true, silent = true })
-
--- Mapear para envolver seleção com aspas duplas
-vim.api.nvim_set_keymap("x", '<leader>"', '<Esc>>a"<Esc><i"<Esc>', { noremap = true, silent = true })
-
--- Mapear para envolver seleção com aspas simples
-vim.api.nvim_set_keymap("x", "<leader>'", "<Esc>>a'<Esc><i'<Esc>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<leader>(", 'c[<C-r>"]<Esc>', { noremap = true, silent = true })
 
 -- Mapear para envolver seleção com chaves
-vim.api.nvim_set_keymap("x", "<leader>{", "<Esc>>a}<Esc><i{<Esc>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<leader>(", 'c{<C-r>"}<Esc>', { noremap = true, silent = true })
 
+-- Mapear para envolver seleção com aspas duplas
+vim.api.nvim_set_keymap("x", "<leader>(", 'c"<C-r>""<Esc>', { noremap = true, silent = true })
+
+-- Mapear para envolver seleção com aspas simples
+vim.api.nvim_set_keymap("x", "<leader>'", "c'<C-r>\"'<Esc>", { noremap = true, silent = true })
+
+--
+--
+--
 -- -- > pyright erros < -- --
 -- No seu arquivo de configuração do Neovim (ex: init.lua)
 require("lspconfig").pyright.setup {
@@ -334,6 +351,15 @@ require("lspconfig").pyright.setup {
   },
 }
 
+--
+--
+--
+--
+--
+--
+--
+--
+--
 -- -- > AMBIENTE VIRTUAL < -- --
 
 -- Função para ativar ambiente virtual
@@ -348,7 +374,7 @@ local function activate_virtualenv()
     poetry_venv = poetry_venv:gsub("%s+", "")
     vim.env.VIRTUAL_ENV = poetry_venv
     vim.env.PATH = poetry_venv .. "/bin:" .. vim.env.PATH
-    print("Activated Poetry virtualenv: " .. poetry_venv)
+    vim.notify("Activated Poetry virtualenv: " .. poetry_venv)
     return
   end
 
@@ -357,15 +383,19 @@ local function activate_virtualenv()
     local venv_path = vim.fn.resolve(venv_dir)
     vim.env.VIRTUAL_ENV = venv_path
     vim.env.PATH = venv_path .. "/bin:" .. vim.env.PATH
-    print("Activated virtualenv: " .. venv_path)
+    vim.notify("Activated virtualenv: " .. venv_path)
   end
 end
 
 -- Executa a função ao iniciar o Neovim
 activate_virtualenv()
-
+--
+--
+--
 -- -- > Mapeamento de teclas para navegar entre buffers abertos < -- --
 vim.api.nvim_set_keymap("n", "<S-l>", ":bnext<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<S-h>", ":bprevious<CR>", { noremap = true, silent = true })
-
+--
+--
+--
 -- -- > < -- --
