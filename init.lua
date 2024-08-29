@@ -21,7 +21,7 @@ end
 require "lazy_setup"
 require "polish"
 
----- > Config Neotree <----
+-- -- > Config Neotree <-- -------------------------------------------------
 require("neo-tree").setup {
   filesystem = {
     follow_current_file = true,
@@ -134,10 +134,10 @@ end
 
 vim.cmd "autocmd! TermOpen term://* lua set_terminal_keymaps()"
 
-----> QUEBRA DE LINHA < ----
+-- -- > QUEBRA DE LINHA < -- ----------------------------------------------
 vim.api.nvim_set_keymap("n", "<F4>", ":set wrap!<CR>", { noremap = true, silent = true })
 
----- > DESTACAR LINHA ATUAL < ----
+-- -- > DESTACAR LINHA ATUAL < -- -----------------------------------------
 
 vim.cmd [[
   highlight LineNr guifg=#FFFFFF
@@ -149,7 +149,7 @@ vim.o.number = true -- Habilitar números de linha
 vim.o.relativenumber = false -- Desativar números de linha relativos
 vim.wo.cursorline = true -- Ativar destaque da linha atual
 
----- > INDETAÇÃO COM TAB & SHIFT+TAB < ----
+-- -- > INDETAÇÃO COM TAB & SHIFT+TAB < -- -----------------------------------
 local function map(mode, lhs, rhs, opts)
   local options = { noremap = true, silent = true }
   if opts then options = vim.tbl_extend("force", options, opts) end
@@ -221,7 +221,7 @@ cmp.setup.cmdline("/", {
 
 -- -- Use cmdline & path source for ':' (if you enabled `native_menu
 
--- -- > cor notify < ----
+-- -- > cor notify < -- -----------------------------------------------
 
 require("notify").setup {
   background_colour = "#000000",
@@ -249,7 +249,7 @@ require("notify").setup {
 --
 --
 --
--- -- > Padrao do CursorLine < -- --
+-- -- > Padrao do CursorLine < -- -----------------------------------
 -- Define estilos diferentes para o cursor
 vim.opt.guicursor = "n-v-c-sm-ve:ver25,i-ci:ver25,r-cr-o:hor20,a:blinkon0"
 
@@ -280,7 +280,7 @@ require("lspconfig").pyright.setup {
 --
 --
 --
--- -- >Move linha com ALT < -- --
+-- -- >Move linha com ALT < -- -- ----------------------------
 -- Função para mover uma linha ou linhas selecionadas para cima
 _G.move_line_up = function()
   local mode = vim.api.nvim_get_mode().mode
@@ -307,10 +307,9 @@ end
 vim.api.nvim_set_keymap("n", "<A-k>", ":lua move_line_up()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "<A-k>", ":lua move_line_up()<CR>", { noremap = true, silent = true })
 
--- Mapear Alt+J para mover a linha ou seleção para baixo
-vim.api.nvim_set_keymap("n", "<A-j>", ":lua move_line_down()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("v", "<A-j>", ":lua move_line_down()<CR>", { noremap = true, silent = true })
---
+-- mapear alt+j para mover a linha ou seleção para baixo
+vim.api.nvim_set_keymap("n", "<a-j>", ":lua move_line_down()<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<a-j>", ":lua move_line_down()<cr>", { noremap = true, silent = true })
 --
 --
 -- -- > Pares (){}[] "" ''< -- --
@@ -319,13 +318,13 @@ vim.api.nvim_set_keymap("v", "<A-j>", ":lua move_line_down()<CR>", { noremap = t
 vim.api.nvim_set_keymap("x", "<leader>(", 'c(<C-r>")<Esc>', { noremap = true, silent = true })
 
 -- Mapear para envolver seleção com colchetes
-vim.api.nvim_set_keymap("x", "<leader>(", 'c[<C-r>"]<Esc>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<leader>[", 'c[<C-r>"]<Esc>', { noremap = true, silent = true })
 
 -- Mapear para envolver seleção com chaves
-vim.api.nvim_set_keymap("x", "<leader>(", 'c{<C-r>"}<Esc>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<leader>{", 'c{<C-r>"}<Esc>', { noremap = true, silent = true })
 
 -- Mapear para envolver seleção com aspas duplas
-vim.api.nvim_set_keymap("x", "<leader>(", 'c"<C-r>""<Esc>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", '<leader>"', 'c"<C-r>""<Esc>', { noremap = true, silent = true })
 
 -- Mapear para envolver seleção com aspas simples
 vim.api.nvim_set_keymap("x", "<leader>'", "c'<C-r>\"'<Esc>", { noremap = true, silent = true })
@@ -351,11 +350,6 @@ require("lspconfig").pyright.setup {
   },
 }
 
---
---
---
---
---
 --
 --
 --
@@ -389,7 +383,6 @@ end
 
 -- Executa a função ao iniciar o Neovim
 activate_virtualenv()
---
 --
 --
 -- -- > Mapeamento de teclas para navegar entre buffers abertos < -- --
