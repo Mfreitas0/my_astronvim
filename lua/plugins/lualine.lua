@@ -9,14 +9,14 @@ return {
       blue = "#65D1FF",
       green = "#3EFFDC",
       violet = "#FF61EF",
-      yellow = "#7d7529",
+      yellow = "#FFA500",
       red = "#FF4A4A",
       fg = "#c3ccdc",
       bg = "#112638",
       inactive_bg = "#2c3043",
       custom_bg = "#112638",
-      gray = "#909190",
-      git_bg = "#914c21",
+      gray = "#9370DB",
+      git_bg = "#F5DEB3",
       error_bg = "#57354c",
     }
 

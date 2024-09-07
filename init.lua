@@ -123,7 +123,7 @@ end
 vim.api.nvim_set_keymap("n", "<C-\\>", ":ToggleTerm direction=float<CR>", { noremap = true, silent = true })
 
 -- Mapeamento de tecla para executar o arquivo atual no terminal horizontal
-vim.api.nvim_set_keymap("n", "<F5>", ":lua run_current_file()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<F6>", ":lua run_current_file()<CR>", { noremap = true, silent = true })
 
 ---------------> Função para rolar o terminal <--------------------------------
 function _G.set_terminal_keymaps()
@@ -391,4 +391,3 @@ vim.api.nvim_set_keymap("n", "<S-h>", ":bprevious<CR>", { noremap = true, silent
 --
 --
 --
--- -- > < -- --
