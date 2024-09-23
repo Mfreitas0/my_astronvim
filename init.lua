@@ -69,61 +69,8 @@ vim.api.nvim_set_keymap("n", "<F3>", ":Neotree toggle<CR>", { noremap = true, si
 --
 --
 ---------> CONFIURACOES DO TERMINAL <----------------------------------------------
-
-require("toggleterm").setup {
-  size = 15,
-  open_mapping = [[<c-\>]],
-  hide_numbers = true,
-  shade_filetypes = {},
-  shade_terminals = true,
-  shading_factor = "1",
-  start_in_insert = true,
-  insert_mappings = true,
-  terminal_mappings = true,
-  persist_size = true,
-  direction = "horizontal", -- Define o modo horizontal split
-  close_on_exit = false, -- Garanta que o terminal não feche após a execução do comando
-  shell = vim.o.shell,
-  float_opts = {
-    border = "curved", -- Tipo de borda para o terminal flutuante "curved"
-    width = 84,
-    height = 35,
-    winblend = 4,
-  },
-}
-
-local Terminal = require("toggleterm.terminal").Terminal
-
-local horizontal_term = Terminal:new { direction = "horizontal", hidden = true, close_on_exit = true }
-
-function _G.run_current_file()
-  local file = vim.fn.expand "%:p"
-  local ext = vim.fn.expand "%:e"
-  local cmd = ""
-
-  if ext == "py" then
-    cmd = "python " .. file
-  elseif ext == "lua" then
-    cmd = "lua " .. file
-  elseif ext == "js" then
-    cmd = "node " .. file
-  else
-    vim.notify(" Não Foi Encontrado Suporte Para Esta Extensão: " .. ext, vim.log.levels.WARN)
-    return
-  end
-
-  horizontal_term:toggle()
-  vim.defer_fn(function()
-    horizontal_term:send(cmd .. "\n", true)
-    vim.notify("▶ Executando arquivo: " .. file, vim.log.levels.INFO)
-  end, 100)
-end
-
 -- Mapeamento de tecla para abrir o terminal flutuante
 vim.api.nvim_set_keymap("n", "<C-\\>", ":ToggleTerm direction=float<CR>", { noremap = true, silent = true })
-
--- Mapeamento de tecla para executar o arquivo atual no terminal horizontal
-vim.api.nvim_set_keymap("n", "<F6>", ":lua run_current_file()<CR>", { noremap = true, silent = true })
 
 ---------------> Função para rolar o terminal <--------------------------------
 function _G.set_terminal_keymaps()
@@ -390,4 +337,43 @@ vim.api.nvim_set_keymap("n", "<S-l>", ":bnext<CR>", { noremap = true, silent = t
 vim.api.nvim_set_keymap("n", "<S-h>", ":bprevious<CR>", { noremap = true, silent = true })
 --
 --
---
+--->>> Função para ordenar buffers por número de buffer <<------
+
+function SortBuffersByNumber()
+  -- Pega a lista de buffers abertos
+  local buffers = vim.fn.getbufinfo { bufloaded = 1 }
+
+  -- Ordena os buffers pelo número
+  table.sort(buffers, function(a, b) return a.bufnr < b.bufnr end)
+
+  -- Retorna a lista ordenada
+  return buffers
+end
+
+-- Função para navegar para o próximo buffer na ordem de número
+function NextBuffer()
+  local buffers = SortBuffersByNumber()
+  local current_buf = vim.fn.bufnr()
+
+  for i, buf in ipairs(buffers) do
+    if buf.bufnr == current_buf then
+      local next_buf = buffers[(i % #buffers) + 1]
+      vim.cmd("buffer " .. next_buf.bufnr)
+      break
+    end
+  end
+end
+
+-- Função para navegar para o buffer anterior na ordem de número
+function PrevBuffer()
+  local buffers = SortBuffersByNumber()
+  local current_buf = vim.fn.bufnr()
+
+  for i, buf in ipairs(buffers) do
+    if buf.bufnr == current_buf then
+      local prev_buf = buffers[(i - 2) % #buffers + 1]
+      vim.cmd("buffer " .. prev_buf.bufnr)
+      break
+    end
+  end
+end

@@ -65,7 +65,7 @@ return {
         lualine_b = {
           {
             "branch",
-            icon = "",
+            icon = "",
             color = { bg = colors.yellow, fg = colors.bg, gui = "bold" },
             separator = { right = "" },
           },
@@ -95,7 +95,7 @@ return {
         lualine_c = {
           {
             "filename",
-            icon = "",
+            icon = "",
             color = { bg = colors.gray, fg = colors.bg, gui = "bold" },
             separator = { right = "" },
           },

@@ -14,3 +14,9 @@
   }
 }
 
+{
+  "reportMissingTypeStubs": false,
+  "python.analysis.extraPaths": [
+    "./path-to-your-stubs"
+  ]
+}

@@ -3,7 +3,7 @@ local toggleterm = require "toggleterm"
 toggleterm.setup {
   open_mapping = [[<c-\>]],
   shade_terminals = false,
-  direction = "horizontal",
+  direction = "float",
   size = 20,
 }
 
